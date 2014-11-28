@@ -1141,7 +1141,13 @@ function mPDF($mode='',$format='A4',$default_font_size=0,$default_font='',$mgl=1
 	$this->SetDisplayPreferences(''); 
 
 	// Font data
-	require(_MPDF_PATH.'config_fonts.php');
+        // Path to config_fonts.php can be defined by constant.
+        // This allow us to keep the config out of mpdf project,
+        // which is very handy, if we have our own fonts and we want to upgrade mpdf 
+        // and we do not want to lose the config_font.php file.
+        $fontConfigPath = empty(_MPDF_FONT_CONFIG_PATH) ? _MPDF_PATH : _MPDF_FONT_CONFIG_PATH;
+	require($fontConfigPath . 'config_fonts.php');
+
 	// Available fonts
 	$this->available_unifonts = array();
 	foreach ($this->fontdata AS $f => $fs) {
