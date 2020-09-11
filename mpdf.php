@@ -24615,9 +24615,9 @@ function _tableHeight(&$table){
 		// If it is less than 1/20th of the remaining page height to finish the DIV (i.e. DIV padding + table bottom margin)
 		// then allow for this
 		$enddiv = $this->blk[$this->blklvl]['padding_bottom'] + $this->blk[$this->blklvl]['border_bottom']['w'] + $table['margin']['B'];
-		if ($remainingpage > $enddiv && $enddiv/$remainingpage <0.05) { $remainingpage -= $enddiv; }
+		if ($remainingpage > $enddiv && @($enddiv/$remainingpage <0.05)) { $remainingpage -= $enddiv; }
 		else if ($remainingpage == 0) { $remainingpage = 0.001; }
-		if ($temppgheight > $enddiv && $enddiv/$temppgheight <0.05) { $temppgheight -= $enddiv; }
+		if ($temppgheight > $enddiv && @($enddiv/$temppgheight <0.05)) { $temppgheight -= $enddiv; }
 		else if ($temppgheight == 0) { $temppgheight = 0.001; }
 	}
 	if ($remainingpage < 0) { $remainingpage = 0.001; }	// mPDF 5.6.64
