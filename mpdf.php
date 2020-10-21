@@ -40,7 +40,8 @@ require_once(_MPDF_PATH.'config_cp.php');
 
 if (!defined('_JPGRAPH_PATH')) define("_JPGRAPH_PATH", _MPDF_PATH.'jpgraph/'); 
 
-if (!defined('_MPDF_TEMP_PATH')) define("_MPDF_TEMP_PATH", _MPDF_PATH.'tmp/');
+if (!defined('_MPDF_TEMP_PATH_FIX')) define("_MPDF_TEMP_PATH_FIX", _MPDF_PATH.'tmp/');
+// if (!defined('_MPDF_TEMP_PATH')) define("_MPDF_TEMP_PATH", _MPDF_PATH.'tmp/');
 
 if (!defined('_MPDF_TTFONTPATH')) { define('_MPDF_TTFONTPATH',_MPDF_PATH.'ttfonts/'); }
 if (!defined('_MPDF_TTFONTDATAPATH')) { define('_MPDF_TTFONTDATAPATH',_MPDF_PATH.'ttfontdata/'); }
@@ -7660,7 +7661,7 @@ function Output($name='',$dest='')
 		if($name=='') { $name='mpdf.pdf'; }
 		$tempfile = '_tempPDF'.uniqid(rand(1,100000),true);
 		//Save to local file
-		$f=fopen(_MPDF_TEMP_PATH.$tempfile.'.pdf','wb');
+		$f=fopen(_MPDF_TEMP_PATH_FIX.$tempfile.'.pdf','wb');
 		if(!$f) $this->Error('Unable to create temporary output file: '.$tempfile.'.pdf');
 		fwrite($f,$this->buffer,strlen($this->buffer));
 		fclose($f);
@@ -7693,7 +7694,7 @@ function Output($name='',$dest='')
 		var hiddenField = document.createElement("input");
 		hiddenField.setAttribute("type", "hidden");
 		hiddenField.setAttribute("name", "path");
-		hiddenField.setAttribute("value", "'.urlencode(_MPDF_TEMP_PATH).'");
+		hiddenField.setAttribute("value", "'.urlencode(_MPDF_TEMP_PATH_FIX).'");
 		form.appendChild(hiddenField);
 
 		document.body.appendChild(form); 
@@ -7770,10 +7771,10 @@ function Output($name='',$dest='')
 	// DELETE OLD TMP FILES - Housekeeping
 	// Delete any files in tmp/ directory that are >1 hrs old
 		$interval = 3600;
-		if ($handle = @opendir(preg_replace('/\/$/','',_MPDF_TEMP_PATH))) {	// mPDF 5.7.3
+		if ($handle = @opendir(preg_replace('/\/$/','',_MPDF_TEMP_PATH_FIX))) {	// mPDF 5.7.3
 		   while (false !== ($file = readdir($handle))) { 
-			if (($file != "..") && ($file != ".") && !is_dir($file) && ((filemtime(_MPDF_TEMP_PATH.$file)+$interval) < time()) && (substr($file, 0, 1) !== '.') && ($file !='dummy.txt')) { // mPDF 5.7.3
-				unlink(_MPDF_TEMP_PATH.$file); 
+			if (($file != "..") && ($file != ".") && !is_dir($file) && ((filemtime(_MPDF_TEMP_PATH_FIX.$file)+$interval) < time()) && (substr($file, 0, 1) !== '.') && ($file !='dummy.txt')) { // mPDF 5.7.3
+				unlink(_MPDF_TEMP_PATH_FIX.$file); 
 			}
 		   }
 		   closedir($handle); 
@@ -10030,7 +10031,7 @@ function _getImage(&$file, $firsttime=true, $allowvector=true, $orig_srcpath=fal
 			if ($this->PDFA && !$this->PDFAauto) { $this->PDFAXwarnings[] = "JPG image may not use CMYK color space - ".$file." - (Image converted to RGB. NB This will alter the colour profile of the image.)"; }
 			$im = @imagecreatefromstring($data);
 			if ($im) {
-				$tempfile = _MPDF_TEMP_PATH.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
+				$tempfile = _MPDF_TEMP_PATH_FIX.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
 				imageinterlace($im, false);
 				$check = @imagepng($im, $tempfile);
 				if (!$check) { return $this->_imageError($file, $firsttime, 'Error creating temporary file ('.$tempfile.') whilst using GD library to parse JPG(CMYK) image'); }
@@ -10135,7 +10136,7 @@ function _getImage(&$file, $firsttime=true, $allowvector=true, $orig_srcpath=fal
 			$w = imagesx($im);
 			$h = imagesy($im);
 			if ($im) {
-			   $tempfile = _MPDF_TEMP_PATH.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
+			   $tempfile = _MPDF_TEMP_PATH_FIX.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
 			   // Alpha channel set
 			   if ($pngalpha) {
 				if ($this->PDFA) { $this->Error("PDFA1-b does not permit images with alpha channel transparency (".$file.")."); }
@@ -10153,8 +10154,8 @@ function _getImage(&$file, $firsttime=true, $allowvector=true, $orig_srcpath=fal
 					}
 				}
 				// create temp alpha file
-	 		 	$tempfile_alpha = _MPDF_TEMP_PATH.'_tempMskPNG'.md5($file).RAND(1,10000).'.png';
-				if (!is_writable(_MPDF_TEMP_PATH)) { 	// mPDF 5.7.2
+	 		 	$tempfile_alpha = _MPDF_TEMP_PATH_FIX.'_tempMskPNG'.md5($file).RAND(1,10000).'.png';
+				if (!is_writable(_MPDF_TEMP_PATH_FIX)) { 	// mPDF 5.7.2
 					ob_start(); 
 					$check = @imagepng($imgalpha);
 					if (!$check) { return $this->_imageError($file, $firsttime, 'Error creating temporary image object whilst using GD library to parse PNG image'); }
@@ -10314,7 +10315,7 @@ function _getImage(&$file, $firsttime=true, $allowvector=true, $orig_srcpath=fal
 		if (isset($gd['GIF Read Support']) && $gd['GIF Read Support']) {
 			$im = @imagecreatefromstring($data);
 			if ($im) {
-				$tempfile = _MPDF_TEMP_PATH.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
+				$tempfile = _MPDF_TEMP_PATH_FIX.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
 				imagealphablending($im, false);
 				imagesavealpha($im, false); 
 				imageinterlace($im, false);
@@ -10445,7 +10446,7 @@ function _getImage(&$file, $firsttime=true, $allowvector=true, $orig_srcpath=fal
 		if (isset($gd['PNG Support']) && $gd['PNG Support']) {
 			$im = @imagecreatefromstring($data);
 			if (!$im) { return $this->_imageError($file, $firsttime, 'Error parsing image file - image type not recognised, and not supported by GD imagecreate'); }
-			$tempfile = _MPDF_TEMP_PATH.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
+			$tempfile = _MPDF_TEMP_PATH_FIX.'_tempImgPNG'.md5($file).RAND(1,10000).'.png';
 			imagealphablending($im, false);
 			imagesavealpha($im, false); 
 			imageinterlace($im, false);
@@ -15584,7 +15585,7 @@ function OpenTag($tag,$attr)
 		$this->meter = new meter();
 		$svg = $this->meter->makeSVG(strtolower($tag), $type, $value, $max, $min, $optimum, $low, $high);
 		//Save to local file
-		$srcpath= _MPDF_TEMP_PATH.'_tempSVG'.uniqid(rand(1,100000),true).'_'.strtolower($tag).'.svg';
+		$srcpath= _MPDF_TEMP_PATH_FIX.'_tempSVG'.uniqid(rand(1,100000),true).'_'.strtolower($tag).'.svg';
 		file_put_contents($srcpath, $svg);
 		$orig_srcpath = $srcpath;
 		$this->GetFullPath($srcpath); 
@@ -17424,7 +17425,7 @@ function OpenTag($tag,$attr)
 	if ($this->cacheTables) {
 		$this->packTableData = true;	// required for cacheTables
 		$this->simpleTables = false;  // Cannot co-exist with cacheTables
-		$table['cache'] = _MPDF_TEMP_PATH.'_tempTblCache'.uniqid(rand(1,100000),true).'.dat';
+		$table['cache'] = _MPDF_TEMP_PATH_FIX.'_tempTblCache'.uniqid(rand(1,100000),true).'.dat';
 		$fh = fopen($table['cache'] , "wb") or $this->Error("When using cacheTables, you must have read/write access to cache files (".$table['cache'] .")");
 		fwrite($fh, "\x00");
 		fclose($fh);
@@ -32507,7 +32508,9 @@ function ConvertSize($size=5,$maxsize=0,$fontsize=false,$usefontsize=true){
 	if ($fontsize) { $size *= $fontsize*2; }
 	else { $size *= $maxsize*2; }
   }
-  else $size *= (25.4/$this->dpi); //nothing == px
+  else {
+      @$size *= (25.4/$this->dpi); //nothing == px
+  }
   
   return $size;
 }
@@ -32563,7 +32566,7 @@ function AdjustHTML($html, $tabSpaces=8) {
 	preg_match_all("/(<svg.*?<\/svg>)/si", $html, $svgi);
 	if (count($svgi[0])) { 
 		for($i=0;$i<count($svgi[0]);$i++) {
-			$file = _MPDF_TEMP_PATH.'_tempSVG'.uniqid(rand(1,100000),true).'_'.$i.'.svg';
+			$file = _MPDF_TEMP_PATH_FIX.'_tempSVG'.uniqid(rand(1,100000),true).'_'.$i.'.svg';
 			//Save to local file
 			file_put_contents($file, $svgi[0][$i]);
 			$html = str_replace($svgi[0][$i], '<img src="'.$file.'" />', $html); 	// mPDF 5.5.18

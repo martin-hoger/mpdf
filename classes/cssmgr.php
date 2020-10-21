@@ -1073,9 +1073,9 @@ function MergeCSS($inherit,$tag,$attr) {
 	if (isset($attr['CLASS'])) {
 		$classes = preg_split('/\s+/',$attr['CLASS']);
 	}
-	if (!isset($attr['ID'])) { $attr['ID']=''; }
+	if (@!isset($attr['ID'])) { @$attr['ID']=''; }
 	//===============================================
-/*-- TABLES --*/
+        /*-- TABLES --*/
 	// Set Inherited properties
 	if ($inherit == 'TOPTABLE') {	// $tag = TABLE
 		//===============================================
@@ -1149,11 +1149,11 @@ function MergeCSS($inherit,$tag,$attr) {
 
 		//===============================================
 		// Save Cascading CSS e.g. "div.topic p" at this block level
-		$this->_mergeFullCSS($this->cascadeCSS, $this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'], $tag, $classes, $attr['ID']);
+		$this->_mergeFullCSS($this->cascadeCSS, $this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'], $tag, $classes, @$attr['ID']);
 		//===============================================
 		// Cascading forward CSS
 		//===============================================
-		$this->_mergeFullCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS'], $this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'], $tag, $classes, $attr['ID']);
+		$this->_mergeFullCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS'], $this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'], $tag, $classes, @$attr['ID']);
 		//===============================================
 		  // Block properties
 		  if (isset($this->mpdf->blk[$this->mpdf->blklvl-1]['margin_collapse']) && $this->mpdf->blk[$this->mpdf->blklvl-1]['margin_collapse']) { $p['MARGIN-COLLAPSE'] = 'COLLAPSE'; }	// custom tag, but follows CSS principle that border-collapse is inherited
@@ -1321,8 +1321,8 @@ function MergeCSS($inherit,$tag,$attr) {
 /*-- END TABLES --*/
 	//===============================================
 	// STYLESHEET ID e.g. #smallone{}  #redletter{}
-	if (isset($attr['ID']) && isset($this->CSS['ID>>'.$attr['ID']]) && $this->CSS['ID>>'.$attr['ID']]) {
-			$zp = $this->CSS['ID>>'.$attr['ID']];
+	if (@isset($attr['ID']) && isset($this->CSS['ID>>' . @$attr['ID']]) && $this->CSS['ID>>' . @$attr['ID']]) {
+			$zp = $this->CSS['ID>>' . @$attr['ID']];
 			if ($tag=='TD' || $tag=='TH')  { $this->setBorderDominance($zp, 9); }	// *TABLES*	// *TABLES-ADVANCED-BORDERS*
 			if (is_array($zp)) { 
 				$p = array_merge($p,$zp); 
@@ -1342,8 +1342,8 @@ function MergeCSS($inherit,$tag,$attr) {
 	}
 	//===============================================
 	// STYLESHEET CLASS e.g. p#smallone{}  div#redletter{}
-	if (isset($attr['ID']) && isset($this->CSS[$tag.'>>ID>>'.$attr['ID']]) && $this->CSS[$tag.'>>ID>>'.$attr['ID']]) {
-			$zp = $this->CSS[$tag.'>>ID>>'.$attr['ID']];
+	if (@isset($attr['ID']) && isset($this->CSS[$tag.'>>ID>>' . @$attr['ID']]) && $this->CSS[$tag.'>>ID>>' . @$attr['ID']]) {
+			$zp = $this->CSS[$tag.'>>ID>>' . @$attr['ID']];
 			if ($tag=='TD' || $tag=='TH')  { $this->setBorderDominance($zp, 9); }	// *TABLES*	// *TABLES-ADVANCED-BORDERS*
 			if (is_array($zp)) { 
 				$p = array_merge($p,$zp); 
@@ -1357,22 +1357,22 @@ function MergeCSS($inherit,$tag,$attr) {
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS']['CLASS>>'.$class], $p);
 		}
-		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS']['ID>>'.$attr['ID']], $p);
+		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS']['ID>>' . @$attr['ID']], $p);
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS'][$tag.'>>CLASS>>'.$class], $p);
 		}
-		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS'][$tag.'>>ID>>'.$attr['ID']], $p);
+		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl-1]['cascadeCSS'][$tag.'>>ID>>' . @$attr['ID']], $p);
 	}
 	else if ($inherit == 'INLINE') {
 		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'][$tag], $p);
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS']['CLASS>>'.$class], $p);
 		}
-		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS']['ID>>'.$attr['ID']], $p);
+		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS']['ID>>' . @$attr['ID']], $p);
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'][$tag.'>>CLASS>>'.$class], $p);
 		}
-		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'][$tag.'>>ID>>'.$attr['ID']], $p);
+		$this->_set_mergedCSS($this->mpdf->blk[$this->mpdf->blklvl]['cascadeCSS'][$tag.'>>ID>>' . @$attr['ID']], $p);
 	}
 /*-- TABLES --*/
 	else if ($inherit == 'TOPTABLE' || $inherit == 'TABLE') { // NB looks at $this->tablecascadeCSS-1 for cascading CSS
@@ -1411,11 +1411,11 @@ function MergeCSS($inherit,$tag,$attr) {
 				}
 			}
 		}
-		$this->_set_mergedCSS($this->tablecascadeCSS[$this->tbCSSlvl-1]['ID>>'.$attr['ID']], $p, false, 9);
+		$this->_set_mergedCSS($this->tablecascadeCSS[$this->tbCSSlvl-1]['ID>>'. @$attr['ID']], $p, false, 9);
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->tablecascadeCSS[$this->tbCSSlvl-1][$tag.'>>CLASS>>'.$class], $p, false, 9);
 		}
-		$this->_set_mergedCSS($this->tablecascadeCSS[$this->tbCSSlvl-1][$tag.'>>ID>>'.$attr['ID']], $p, false, 9);
+		$this->_set_mergedCSS($this->tablecascadeCSS[$this->tbCSSlvl-1][$tag.'>>ID>>'. @$attr['ID']], $p, false, 9);
 	}
 /*-- END TABLES --*/
 	//===============================================
@@ -1426,11 +1426,11 @@ function MergeCSS($inherit,$tag,$attr) {
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->listcascadeCSS[$this->listCSSlvl-1]['CLASS>>'.$class], $p, false);
 		}
-		$this->_set_mergedCSS($this->listcascadeCSS[$this->listCSSlvl-1]['ID>>'.$attr['ID']], $p, false);
+		$this->_set_mergedCSS($this->listcascadeCSS[$this->listCSSlvl-1]['ID>>'. @$attr['ID']], $p, false);
 		foreach($classes AS $class) {
 			$this->_set_mergedCSS($this->listcascadeCSS[$this->listCSSlvl-1][$tag.'>>CLASS>>'.$class], $p, false);
 		}
-		$this->_set_mergedCSS($this->listcascadeCSS[$this->listCSSlvl-1][$tag.'>>ID>>'.$attr['ID']], $p, false);
+		$this->_set_mergedCSS($this->listcascadeCSS[$this->listCSSlvl-1][$tag.'>>ID>>'. @$attr['ID']], $p, false);
 	}
 /*-- END LISTS --*/
 	//===============================================
